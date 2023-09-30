@@ -1,9 +1,17 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import VideoPlayer from '@/components/VideoPlayer.vue'
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
+  <main class="main-video-player">
+    <VideoPlayer />
   </main>
 </template>
+
+<style scoped>
+.main-video-player {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+}
+</style>
