@@ -10,8 +10,7 @@ import VideoPlayer from '@/components/VideoPlayer.vue'
 
 <style scoped>
 .main-video-player {
-  height: 100%;
+  height: calc(100% - 35px);
   width: 100%;
-  flex: 1;
 }
 </style>
