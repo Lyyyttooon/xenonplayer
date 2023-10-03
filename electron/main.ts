@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, powerSaveBlocker } from 'electron'
+import { app, BrowserWindow, ipcMain, net, powerSaveBlocker, protocol } from 'electron'
 import { join } from 'node:path'
 
 let win: BrowserWindow | null = null
@@ -7,6 +7,10 @@ let powerSaveBlockerId: number | null = null
 const preload = join(__dirname, './preload.js')
 const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = join('dist/index.html')
+
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'stream', privileges: { bypassCSP: true, stream: true, secure: false } }
+])
 
 function createWindow() {
   win = new BrowserWindow({
@@ -36,6 +40,11 @@ function createWindow() {
 app.whenReady().then(() => {
   ipcMain.on('set-fullscreen', handleSetFullscreen)
   ipcMain.on('set-focus', handleFouseMainWindow)
+
+  protocol.handle('stream', (request) => {
+    const filePath = request.url.slice('stream://'.length)
+    return net.fetch('file://' + filePath)
+  })
 
   createWindow()
 })

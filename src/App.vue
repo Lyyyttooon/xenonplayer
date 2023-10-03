@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+
+document.addEventListener('keyup', (e) => {
+  if (e.key === 'F5') {
+    window.location.reload()
+  }
+})
 </script>
 
 <template>
