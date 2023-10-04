@@ -8,10 +8,6 @@ const preload = join(__dirname, './preload.js')
 const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = join('dist/index.html')
 
-protocol.registerSchemesAsPrivileged([
-  { scheme: 'stream', privileges: { bypassCSP: true, stream: true, secure: false } }
-])
-
 function createWindow() {
   win = new BrowserWindow({
     frame: false,
@@ -40,11 +36,6 @@ function createWindow() {
 app.whenReady().then(() => {
   ipcMain.on('set-fullscreen', handleSetFullscreen)
   ipcMain.on('set-focus', handleFouseMainWindow)
-
-  protocol.handle('stream', (request) => {
-    const filePath = request.url.slice('stream://'.length)
-    return net.fetch('file://' + filePath)
-  })
 
   createWindow()
 })
