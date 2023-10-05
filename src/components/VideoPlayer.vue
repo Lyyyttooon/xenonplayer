@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 
 const videoUrl = ref('')
+const videoElement = ref<HTMLVideoElement | null>(null)
 
 const openFile = () => {
   const input = document.getElementById('open-file')
@@ -13,12 +14,16 @@ const handleFileChange = (e: Event) => {
   const file = target.files?.item(0)
   if (file) {
     videoUrl.value = URL.createObjectURL(file)
+    nextTick(() => {
+      console.log(videoElement.value)
+      videoElement.value?.play()
+    })
   }
 }
 </script>
 <template>
   <div class="video-player">
-    <video v-if="videoUrl !== ''" class="video" controls>
+    <video ref="videoElement" v-if="videoUrl !== ''" class="video" controls>
       <source :src="videoUrl" />
     </video>
     <div v-else class="open-file-container">
@@ -45,7 +50,7 @@ const handleFileChange = (e: Event) => {
   height: calc(100% - 64px);
   margin: auto;
   width: 100%;
-  background-color: #1e1e1e;
+  background-color: #000;
 }
 
 .open-file-container {
