@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
+import { CaretRight } from '@element-plus/icons-vue'
 
 const videoUrl = ref('')
 const videoElement = ref<HTMLVideoElement | null>(null)
@@ -45,7 +46,15 @@ const handleFileChange = (e: Event) => {
         </div>
         <div class="volume-container"></div>
       </div>
-      <div class="control-btns"></div>
+      <div class="control-btns">
+        <div class="btn start-pause-btn">
+          <el-icon><CaretRight /></el-icon>
+        </div>
+        <div class="btn stop-btn"></div>
+        <div class="btn before-btn"></div>
+        <div class="btn next-btn"></div>
+        <div class="btn open-btn"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -113,6 +122,27 @@ const handleFileChange = (e: Event) => {
   .volume-container {
     height: 100%;
     width: 128px;
+  }
+}
+
+.control-btns {
+  height: calc(100% - 24px);
+  display: flex;
+
+  .btn {
+    height: 100%;
+    width: 40px;
+    background-color: #323233;
+    border-right: 1px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .start-stop-btn {
+    height: 100%;
+    width: 40px;
+    background-color: #323233;
+    border-right: 1px solid #000;
   }
 }
 </style>
