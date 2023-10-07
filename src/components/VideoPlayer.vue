@@ -44,16 +44,27 @@ const handleFileChange = (e: Event) => {
           <div class="scrubber-button"></div>
           <div class="fill-line"></div>
         </div>
-        <div class="volume-container"></div>
+        <div class="volume-container">
+          <img src="@/assets/icons-voice.png" />
+          <div class="fill-line"></div>
+        </div>
       </div>
       <div class="control-btns">
         <div class="btn start-pause-btn">
-          <el-icon><CaretRight /></el-icon>
+          <img src="@/assets/icons-play.png" />
         </div>
-        <div class="btn stop-btn"></div>
-        <div class="btn before-btn"></div>
-        <div class="btn next-btn"></div>
-        <div class="btn open-btn"></div>
+        <div class="btn stop-btn">
+          <img src="@/assets/icons-stop.png" />
+        </div>
+        <div class="btn before-btn">
+          <img src="@/assets/icons-previous.png" />
+        </div>
+        <div class="btn next-btn">
+          <img src="@/assets/icons-next.png" />
+        </div>
+        <div class="btn open-btn">
+          <img src="@/assets/icons-open.png" />
+        </div>
       </div>
     </div>
   </div>
@@ -93,7 +104,7 @@ const handleFileChange = (e: Event) => {
 
   .process-container {
     height: 100%;
-    width: calc(100% - 128px);
+    width: calc(100% - 112px);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -106,10 +117,11 @@ const handleFileChange = (e: Event) => {
     }
 
     .scrubber-button {
-      height: 12px;
-      width: 12px;
-      border-radius: 6px;
-      background-color: #c9c9c9;
+      height: 11px;
+      width: 11px;
+      border-radius: 5.5px;
+      border: 1px solid #000;
+      background-color: #ffffff;
       position: relative;
       left: 0;
       right: 0;
@@ -121,7 +133,22 @@ const handleFileChange = (e: Event) => {
 
   .volume-container {
     height: 100%;
-    width: 128px;
+    width: 112px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+
+    > img {
+      height: 14px;
+      width: 14px;
+    }
+
+    > .fill-line {
+      height: 2px;
+      width: 100%;
+      background-color: #575656;
+      margin: 0 12px 0 4px;
+    }
   }
 }
 
@@ -129,7 +156,7 @@ const handleFileChange = (e: Event) => {
   height: calc(100% - 24px);
   display: flex;
 
-  .btn {
+  > .btn {
     height: 100%;
     width: 40px;
     background-color: #323233;
@@ -137,6 +164,11 @@ const handleFileChange = (e: Event) => {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    > img {
+      width: 12px;
+      height: 12px;
+    }
   }
   .start-stop-btn {
     height: 100%;
