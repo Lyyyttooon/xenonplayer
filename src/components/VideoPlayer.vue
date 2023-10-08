@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
-import { CaretRight } from '@element-plus/icons-vue'
 
 const videoUrl = ref('')
 const videoElement = ref<HTMLVideoElement | null>(null)
