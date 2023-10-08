@@ -3,6 +3,7 @@ import { nextTick, ref } from 'vue'
 
 const videoUrl = ref('')
 const videoElement = ref<HTMLVideoElement | null>(null)
+const videoStatus = ref('pause')
 
 const openFile = () => {
   const input = document.getElementById('open-file')
@@ -20,11 +21,24 @@ const handleFileChange = (e: Event) => {
     })
   }
 }
+
+const playPauseVideo = () => {
+  if (videoUrl.value === '') {
+    return
+  }
+  if (videoStatus.value === 'pause') {
+    videoElement.value?.pause()
+    videoStatus.value = 'play'
+  } else {
+    videoElement.value?.play()
+    videoStatus.value = 'pause'
+  }
+}
 </script>
 
 <template>
   <div class="video-player">
-    <video ref="videoElement" v-if="videoUrl !== ''" class="video" controls>
+    <video ref="videoElement" v-if="videoUrl !== ''" class="video" @dblclick="playPauseVideo">
       <source :src="videoUrl" />
     </video>
     <div v-else class="open-file-container">
@@ -50,8 +64,9 @@ const handleFileChange = (e: Event) => {
         </div>
       </div>
       <div class="control-btns">
-        <div class="btn start-pause-btn">
-          <img src="@/assets/icons-play.png" />
+        <div class="btn start-pause-btn" @click="playPauseVideo">
+          <img v-if="videoUrl === '' || videoStatus !== 'pause'" src="@/assets/icons-play.png" />
+          <img v-else src="@/assets/icons-pause.png" />
         </div>
         <div class="btn stop-btn">
           <img src="@/assets/icons-stop.png" />
@@ -119,7 +134,7 @@ const handleFileChange = (e: Event) => {
     justify-content: center;
     padding: 0 8px;
 
-    .fill-line {
+    > .fill-line {
       height: 2px;
       width: 100%;
       background-color: #575656;
@@ -169,6 +184,7 @@ const handleFileChange = (e: Event) => {
 .control-btns {
   height: calc(100% - 24px);
   display: flex;
+  user-select: none;
 
   > .btn {
     height: 100%;
@@ -184,11 +200,12 @@ const handleFileChange = (e: Event) => {
       height: 12px;
     }
   }
-  .start-stop-btn {
-    height: 100%;
-    width: 40px;
-    background-color: #323233;
-    border-right: 1px solid #000;
+
+  > .btn:hover {
+    background-color: #3b3b3b;
+  }
+  > .btn:active {
+    background-color: #2c2c2c;
   }
 }
 </style>
