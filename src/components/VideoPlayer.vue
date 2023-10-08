@@ -41,11 +41,12 @@ const handleFileChange = (e: Event) => {
     <div class="control-bar">
       <div class="process-bar">
         <div class="process-container">
-          <div class="scrubber-button"></div>
+          <div id="video-scrubber-button" class="scrubber-button"></div>
           <div class="fill-line"></div>
         </div>
         <div class="volume-container">
           <img src="@/assets/icons-voice.png" />
+          <div id="volume-scrubber-button" class="scrubber-button"></div>
           <div class="fill-line"></div>
         </div>
       </div>
@@ -97,12 +98,21 @@ const handleFileChange = (e: Event) => {
   flex: none;
 }
 
+.scrubber-button {
+  height: 11px;
+  width: 11px;
+  border-radius: 5.5px;
+  border: 1px solid #000;
+  background-color: #ffffff;
+}
+
 .process-bar {
   height: 24px;
   border-bottom: 1px solid #000;
   display: flex;
 
   .process-container {
+    position: relative;
     height: 100%;
     width: calc(100% - 112px);
     display: inline-flex;
@@ -116,25 +126,21 @@ const handleFileChange = (e: Event) => {
       background-color: #575656;
     }
 
-    .scrubber-button {
-      height: 11px;
-      width: 11px;
-      border-radius: 5.5px;
-      border: 1px solid #000;
-      background-color: #ffffff;
-      position: relative;
-      left: 0;
+    > #video-scrubber-button {
+      position: absolute;
+      left: 5px;
       right: 0;
-      top: 0;
+      top: 25%;
       bottom: 0;
       transform: translateX(0px);
     }
   }
 
   .volume-container {
+    position: relative;
     height: 100%;
     width: 112px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     flex-direction: row;
 
@@ -143,11 +149,20 @@ const handleFileChange = (e: Event) => {
       width: 14px;
     }
 
-    > .fill-line {
+    .fill-line {
       height: 2px;
       width: 100%;
       background-color: #575656;
       margin: 0 12px 0 4px;
+    }
+
+    #volume-scrubber-button {
+      position: absolute;
+      left: 17px;
+      right: 0;
+      top: 25%;
+      bottom: 0;
+      transform: translateX(0px);
     }
   }
 }
