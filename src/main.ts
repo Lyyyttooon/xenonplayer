@@ -16,3 +16,9 @@ app.use(router)
 app.use(ElementPlus)
 
 app.mount('#app')
+
+declare global {
+  interface Window {
+    electronAPI: any
+  }
+}

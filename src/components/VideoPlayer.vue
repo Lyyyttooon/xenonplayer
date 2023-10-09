@@ -41,6 +41,10 @@ const stopVideo = () => {
   videoUrl.value = ''
   videoStatus.value = 'pause'
 }
+
+window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
+  videoUrl.value = URL.createObjectURL(new Blob([blobData]))
+})
 </script>
 
 <template>

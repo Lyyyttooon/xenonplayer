@@ -1,5 +1,6 @@
-import { app, BrowserWindow, ipcMain, net, powerSaveBlocker, protocol } from 'electron'
+import { app, BrowserWindow, ipcMain, powerSaveBlocker } from 'electron'
 import { join } from 'node:path'
+import fs from 'node:fs'
 
 let win: BrowserWindow | null = null
 let powerSaveBlockerId: number | null = null
@@ -49,6 +50,21 @@ app.on('activate', () => {
   }
 })
 
+app.on('ready', () => {
+  if (process.platform === 'darwin') {
+    return
+  }
+  const url = process.argv[process.argv.length - 1]
+  openFile(url)
+})
+
+app.on('will-finish-launching', () => {
+  app.on('open-file', (event, url) => {
+    event.preventDefault()
+    openFile(url)
+  })
+})
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
@@ -71,4 +87,15 @@ function handleFouseMainWindow() {
   if (win) {
     win.focus()
   }
+}
+
+function openFile(url: string) {
+  fs.readFile(url, (err, data) => {
+    if (err) {
+      console.log('File read error', err.message)
+      return
+    }
+    console.log(data)
+    win?.webContents.send('file-opened', url, data)
+  })
 }
