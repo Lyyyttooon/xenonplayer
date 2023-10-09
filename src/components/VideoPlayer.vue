@@ -14,9 +14,12 @@ const handleFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.item(0)
   if (file) {
-    videoUrl.value = URL.createObjectURL(file)
+    stopVideo()
     nextTick(() => {
-      playPauseVideo()
+      videoUrl.value = URL.createObjectURL(file)
+      nextTick(() => {
+        playPauseVideo()
+      })
     })
   }
 }
@@ -45,16 +48,7 @@ const stopVideo = () => {
     <video ref="videoElement" v-if="videoUrl !== ''" class="video" @dblclick="playPauseVideo">
       <source :src="videoUrl" />
     </video>
-    <div v-else class="open-file-container">
-      <el-button @click="openFile">点击打开</el-button>
-      <input
-        id="open-file"
-        style="display: none"
-        type="file"
-        accept="video/*"
-        @change="handleFileChange"
-      />
-    </div>
+    <div v-else class="open-file-container"></div>
     <div class="control-bar">
       <div class="process-bar">
         <div class="process-container">
@@ -81,8 +75,15 @@ const stopVideo = () => {
         <div class="btn next-btn">
           <img src="@/assets/icons-next.png" />
         </div>
-        <div class="btn open-btn">
+        <div class="btn open-btn" @click="openFile">
           <img src="@/assets/icons-open.png" />
+          <input
+            id="open-file"
+            style="display: none"
+            type="file"
+            accept="video/*, .mkv"
+            @change="handleFileChange"
+          />
         </div>
       </div>
     </div>
