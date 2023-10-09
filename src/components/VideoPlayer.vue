@@ -16,8 +16,7 @@ const handleFileChange = (e: Event) => {
   if (file) {
     videoUrl.value = URL.createObjectURL(file)
     nextTick(() => {
-      console.log(videoElement.value)
-      videoElement.value?.play()
+      playPauseVideo()
     })
   }
 }
@@ -27,12 +26,17 @@ const playPauseVideo = () => {
     return
   }
   if (videoStatus.value === 'pause') {
-    videoElement.value?.pause()
+    videoElement.value?.play()
     videoStatus.value = 'play'
   } else {
-    videoElement.value?.play()
+    videoElement.value?.pause()
     videoStatus.value = 'pause'
   }
+}
+
+const stopVideo = () => {
+  videoUrl.value = ''
+  videoStatus.value = 'pause'
 }
 </script>
 
@@ -65,10 +69,10 @@ const playPauseVideo = () => {
       </div>
       <div class="control-btns">
         <div class="btn start-pause-btn" @click="playPauseVideo">
-          <img v-if="videoUrl === '' || videoStatus !== 'pause'" src="@/assets/icons-play.png" />
+          <img v-if="videoUrl === '' || videoStatus === 'pause'" src="@/assets/icons-play.png" />
           <img v-else src="@/assets/icons-pause.png" />
         </div>
-        <div class="btn stop-btn">
+        <div class="btn stop-btn" @click="stopVideo">
           <img src="@/assets/icons-stop.png" />
         </div>
         <div class="btn before-btn">
