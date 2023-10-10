@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { nextTick, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 
 const videoUrl = ref('')
 const videoElement = ref<HTMLVideoElement | null>(null)
 const videoStatus = ref('pause')
+const videoPorcessStyle = ref({})
 
 const openFile = () => {
   const input = document.getElementById('open-file')
@@ -19,6 +20,11 @@ const handleFileChange = (e: Event) => {
       videoUrl.value = URL.createObjectURL(file)
       nextTick(() => {
         playPauseVideo()
+        videoElement.value?.addEventListener('timeupdate', () => {
+          videoPorcessStyle.value = {
+            left: `${(videoElement.value?.currentTime / videoElement.value?.duration) * 99}%`
+          }
+        })
       })
     })
   }
@@ -45,6 +51,8 @@ const stopVideo = () => {
 window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
   videoUrl.value = URL.createObjectURL(new Blob([blobData]))
 })
+
+onMounted(() => {})
 </script>
 
 <template>
@@ -56,7 +64,7 @@ window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
     <div class="control-bar">
       <div class="process-bar">
         <div class="process-container">
-          <div id="video-scrubber-button" class="scrubber-button"></div>
+          <div id="video-scrubber-button" class="scrubber-button" :style="videoPorcessStyle"></div>
           <div class="fill-line"></div>
         </div>
         <div class="volume-container">
@@ -73,12 +81,12 @@ window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
         <div class="btn stop-btn" @click="stopVideo">
           <img src="@/assets/icons-stop.png" />
         </div>
-        <div class="btn before-btn">
+        <!-- <div class="btn before-btn">
           <img src="@/assets/icons-previous.png" />
         </div>
         <div class="btn next-btn">
           <img src="@/assets/icons-next.png" />
-        </div>
+        </div> -->
         <div class="btn open-btn" @click="openFile">
           <img src="@/assets/icons-open.png" />
           <input
@@ -141,7 +149,7 @@ window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 8px;
+    margin: 0 8px;
 
     > .fill-line {
       height: 2px;
@@ -151,9 +159,9 @@ window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
 
     > #video-scrubber-button {
       position: absolute;
-      left: 5px;
+      left: 0;
       right: 0;
-      top: 25%;
+      top: 26%;
       bottom: 0;
       transform: translateX(0px);
     }
