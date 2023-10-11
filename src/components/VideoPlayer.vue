@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 
 const videoUrl = ref('')
 const videoElement = ref<HTMLVideoElement | null>(null)
 const videoStatus = ref('pause')
-const videoPorcessStyle = ref({})
+const videoPorcess = ref(0)
 
 const openFile = () => {
   const input = document.getElementById('open-file')
@@ -21,9 +21,9 @@ const handleFileChange = (e: Event) => {
       nextTick(() => {
         playPauseVideo()
         videoElement.value?.addEventListener('timeupdate', () => {
-          videoPorcessStyle.value = {
-            left: `${(videoElement.value?.currentTime / videoElement.value?.duration) * 99}%`
-          }
+          let currentTime = videoElement.value?.currentTime ? videoElement.value?.currentTime : 0
+          let duration = videoElement.value?.duration ? videoElement.value?.duration : 0
+          videoPorcess.value = currentTime / duration
         })
       })
     })
@@ -46,13 +46,18 @@ const playPauseVideo = () => {
 const stopVideo = () => {
   videoUrl.value = ''
   videoStatus.value = 'pause'
+  videoPorcess.value = 0
 }
 
 window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
   videoUrl.value = URL.createObjectURL(new Blob([blobData]))
 })
 
-onMounted(() => {})
+const videoProcessButtonStyle = computed(() => {
+  return {
+    left: `${(videoPorcess.value * 100).toFixed(2)}%`
+  }
+})
 </script>
 
 <template>
@@ -64,7 +69,11 @@ onMounted(() => {})
     <div class="control-bar">
       <div class="process-bar">
         <div class="process-container">
-          <div id="video-scrubber-button" class="scrubber-button" :style="videoPorcessStyle"></div>
+          <div
+            id="video-scrubber-button"
+            class="scrubber-button"
+            :style="videoProcessButtonStyle"
+          ></div>
           <div class="fill-line"></div>
         </div>
         <div class="volume-container">
@@ -149,7 +158,7 @@ onMounted(() => {})
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 0 8px;
+    margin: 0 16px 0 8px;
 
     > .fill-line {
       height: 2px;
