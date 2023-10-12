@@ -4,8 +4,10 @@ import { computed, nextTick, ref } from 'vue'
 const videoUrl = ref('')
 const videoElement = ref<HTMLVideoElement | null>(null)
 const videoStatus = ref('pause')
-const videoPorcess = ref(0)
+const videoProcess = ref(0)
+const volumeProcess = ref(1)
 
+// methods
 const openFile = () => {
   const input = document.getElementById('open-file')
   input?.click()
@@ -15,16 +17,21 @@ const handleFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.item(0)
   if (file) {
+    console.log(file)
     stopVideo()
     nextTick(() => {
       videoUrl.value = URL.createObjectURL(file)
       nextTick(() => {
         playPauseVideo()
-        videoElement.value?.addEventListener('timeupdate', () => {
+        if (!videoElement.value) {
+          return
+        }
+        videoElement.value.addEventListener('timeupdate', () => {
           let currentTime = videoElement.value?.currentTime ? videoElement.value?.currentTime : 0
           let duration = videoElement.value?.duration ? videoElement.value?.duration : 0
-          videoPorcess.value = currentTime / duration
+          videoProcess.value = currentTime / duration
         })
+        videoElement.value.volume = volumeProcess.value
       })
     })
   }
@@ -46,17 +53,24 @@ const playPauseVideo = () => {
 const stopVideo = () => {
   videoUrl.value = ''
   videoStatus.value = 'pause'
-  videoPorcess.value = 0
+  videoProcess.value = 0
 }
 
-window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
-  videoUrl.value = URL.createObjectURL(new Blob([blobData]))
-})
-
+// computed
 const videoProcessButtonStyle = computed(() => {
   return {
-    left: `${(videoPorcess.value * 100).toFixed(2)}%`
+    left: `${(videoProcess.value * 100).toFixed(2)}%`
   }
+})
+const volumeButtonStyle = computed(() => {
+  return {
+    left: `${(volumeProcess.value * 90).toFixed(2)}%`
+  }
+})
+
+// electron method
+window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
+  videoUrl.value = URL.createObjectURL(new Blob([blobData]))
 })
 </script>
 
@@ -76,9 +90,9 @@ const videoProcessButtonStyle = computed(() => {
           ></div>
           <div class="fill-line"></div>
         </div>
+        <img src="@/assets/icons-voice.png" style="height: 14px; width: 14px" />
         <div class="volume-container">
-          <img src="@/assets/icons-voice.png" />
-          <div id="volume-scrubber-button" class="scrubber-button"></div>
+          <div id="volume-scrubber-button" class="scrubber-button" :style="volumeButtonStyle"></div>
           <div class="fill-line"></div>
         </div>
       </div>
@@ -150,6 +164,9 @@ const videoProcessButtonStyle = computed(() => {
   height: 24px;
   border-bottom: 1px solid #000;
   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 
   .process-container {
     position: relative;
@@ -179,28 +196,23 @@ const videoProcessButtonStyle = computed(() => {
   .volume-container {
     position: relative;
     height: 100%;
-    width: 112px;
+    width: 96px;
     display: inline-flex;
     align-items: center;
     flex-direction: row;
-
-    > img {
-      height: 14px;
-      width: 14px;
-    }
+    margin: 0 16px 0 8px;
 
     .fill-line {
       height: 2px;
       width: 100%;
       background-color: #575656;
-      margin: 0 12px 0 4px;
     }
 
     #volume-scrubber-button {
       position: absolute;
-      left: 17px;
+      left: 0;
       right: 0;
-      top: 25%;
+      top: 26%;
       bottom: 0;
       transform: translateX(0px);
     }
