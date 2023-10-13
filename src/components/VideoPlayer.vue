@@ -9,8 +9,12 @@ const volumeProcess = ref(1)
 
 // methods
 const openFile = () => {
-  const input = document.getElementById('open-file')
-  input?.click()
+  window.electronAPI.setDialog({
+    filters: [
+      { name: '视频文件', extensions: ['mp4', 'mkv', 'webm'] },
+      { name: 'All Files', extensions: ['*'] }
+    ]
+  })
 }
 
 const handleFileChange = (e: Event) => {
@@ -18,22 +22,6 @@ const handleFileChange = (e: Event) => {
   const file = target.files?.item(0)
   if (file) {
     console.log(file)
-    stopVideo()
-    nextTick(() => {
-      videoUrl.value = URL.createObjectURL(file)
-      nextTick(() => {
-        playPauseVideo()
-        if (!videoElement.value) {
-          return
-        }
-        videoElement.value.addEventListener('timeupdate', () => {
-          let currentTime = videoElement.value?.currentTime ? videoElement.value?.currentTime : 0
-          let duration = videoElement.value?.duration ? videoElement.value?.duration : 0
-          videoProcess.value = currentTime / duration
-        })
-        videoElement.value.volume = volumeProcess.value
-      })
-    })
   }
 }
 
@@ -70,7 +58,22 @@ const volumeButtonStyle = computed(() => {
 
 // electron method
 window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
-  videoUrl.value = URL.createObjectURL(new Blob([blobData]))
+  stopVideo()
+  nextTick(() => {
+    videoUrl.value = URL.createObjectURL(new Blob([blobData]))
+    nextTick(() => {
+      playPauseVideo()
+      if (!videoElement.value) {
+        return
+      }
+      videoElement.value.addEventListener('timeupdate', () => {
+        let currentTime = videoElement.value?.currentTime ? videoElement.value?.currentTime : 0
+        let duration = videoElement.value?.duration ? videoElement.value?.duration : 0
+        videoProcess.value = currentTime / duration
+      })
+      videoElement.value.volume = volumeProcess.value
+    })
+  })
 })
 </script>
 

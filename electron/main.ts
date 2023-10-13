@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, powerSaveBlocker } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, powerSaveBlocker } from 'electron'
 import { join } from 'node:path'
 import fs from 'node:fs'
 
@@ -37,6 +37,7 @@ function createWindow() {
 app.whenReady().then(() => {
   ipcMain.on('set-fullscreen', handleSetFullscreen)
   ipcMain.on('set-focus', handleFouseMainWindow)
+  ipcMain.on('open-select-file-dialog', openSelectFileDialog)
 
   createWindow()
 })
@@ -95,7 +96,17 @@ function openFile(url: string) {
       console.log('File read error', err.message)
       return
     }
-    console.log(data)
     win?.webContents.send('file-opened', url, data)
   })
+}
+
+function openSelectFileDialog(_: any, options: object) {
+  dialog
+    .showOpenDialog(options)
+    .then((result) => {
+      openFile(result.filePaths[0])
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
