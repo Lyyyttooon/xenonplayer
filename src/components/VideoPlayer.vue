@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
 
+interface HotkeyEvent {
+  [key: string]: () => void
+}
+
 const videoUrl = ref('')
 const videoElement = ref<HTMLVideoElement | null>(null)
 const videoStatus = ref('pause')
@@ -44,6 +48,10 @@ const stopVideo = () => {
   videoProcess.value = 0
 }
 
+const hotkeyEvent: HotkeyEvent = {
+  Space: playPauseVideo
+}
+
 // computed
 const videoProcessButtonStyle = computed(() => {
   return {
@@ -74,6 +82,13 @@ window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
       videoElement.value.volume = volumeProcess.value
     })
   })
+})
+
+// event listener
+document.addEventListener('keyup', (e) => {
+  if (hotkeyEvent[e.code]) {
+    hotkeyEvent[e.code]()
+  }
 })
 </script>
 
