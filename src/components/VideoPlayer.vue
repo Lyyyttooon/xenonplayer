@@ -65,6 +65,7 @@ const volumeButtonStyle = computed(() => {
 })
 
 // electron method
+// 使用electron ipc打开文件
 window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
   stopVideo()
   nextTick(() => {
