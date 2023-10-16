@@ -48,8 +48,16 @@ const stopVideo = () => {
   videoProcess.value = 0
 }
 
+const videoTimeJump = () => {
+  if (!videoElement.value) {
+    return
+  }
+  videoElement.value.currentTime += 5
+}
+
 const hotkeyEvent: HotkeyEvent = {
-  Space: playPauseVideo
+  Space: playPauseVideo,
+  ArrowRight: videoTimeJump
 }
 
 // computed
