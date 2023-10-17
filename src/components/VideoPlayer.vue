@@ -10,6 +10,7 @@ const videoElement = ref<HTMLVideoElement | null>(null)
 const videoStatus = ref('pause')
 const videoProcess = ref(0)
 const volumeProcess = ref(1)
+let isFullScreen = false
 
 // methods
 const openFile = () => {
@@ -55,9 +56,18 @@ const videoTimeJump = () => {
   videoElement.value.currentTime += 5
 }
 
+const fullScreen = () => {
+  if (!videoElement.value) {
+    return
+  }
+  window.electronAPI.setFullScreen(isFullScreen)
+  isFullScreen = !isFullScreen
+}
+
 const hotkeyEvent: HotkeyEvent = {
   Space: playPauseVideo,
-  ArrowRight: videoTimeJump
+  ArrowRight: videoTimeJump,
+  Enter: fullScreen
 }
 
 // computed
