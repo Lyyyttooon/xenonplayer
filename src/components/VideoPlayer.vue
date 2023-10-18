@@ -10,7 +10,7 @@ const videoElement = ref<HTMLVideoElement | null>(null)
 const videoStatus = ref('pause')
 const videoProcess = ref(0)
 const volumeProcess = ref(1)
-let isFullScreen = false
+const isFullScreen = ref(false)
 
 // methods
 const openFile = () => {
@@ -60,8 +60,8 @@ const fullScreen = () => {
   if (!videoElement.value) {
     return
   }
-  window.electronAPI.setFullScreen(isFullScreen)
-  isFullScreen = !isFullScreen
+  isFullScreen.value = !isFullScreen.value
+  window.electronAPI.setFullScreen(isFullScreen.value)
 }
 
 const hotkeyEvent: HotkeyEvent = {
@@ -76,10 +76,22 @@ const videoProcessButtonStyle = computed(() => {
     left: `${(videoProcess.value * 100).toFixed(2)}%`
   }
 })
+
 const volumeButtonStyle = computed(() => {
   return {
     left: `${(volumeProcess.value * 90).toFixed(2)}%`
   }
+})
+
+const controlBarFullScreenStyle = computed(() => {
+  if (isFullScreen.value) {
+    return {
+      position: 'absolute' as 'absolute',
+      width: '100%',
+      bottom: 0
+    }
+  }
+  return undefined
 })
 
 // electron method
@@ -117,7 +129,7 @@ document.addEventListener('keyup', (e) => {
       <source :src="videoUrl" />
     </video>
     <div v-else class="open-file-container"></div>
-    <div class="control-bar">
+    <div class="control-bar" :style="controlBarFullScreenStyle">
       <div class="process-bar">
         <div class="process-container">
           <div
