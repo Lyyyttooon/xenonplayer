@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 
 interface HotkeyEvent {
   [key: string]: () => void
@@ -11,6 +11,7 @@ const videoStatus = ref('pause')
 const videoProcess = ref(0)
 const volumeProcess = ref(1)
 const isFullScreen = ref(false)
+const controlBarShow = ref(true)
 
 // methods
 const openFile = () => {
@@ -70,6 +71,15 @@ const hotkeyEvent: HotkeyEvent = {
   Enter: fullScreen
 }
 
+// watch
+watch(isFullScreen, (value) => {
+  if (value) {
+    controlBarShow.value = false
+  } else {
+    controlBarShow.value = true
+  }
+})
+
 // computed
 const videoProcessButtonStyle = computed(() => {
   return {
@@ -89,6 +99,15 @@ const controlBarFullScreenStyle = computed(() => {
       position: 'absolute' as 'absolute',
       width: '100%',
       bottom: 0
+    }
+  }
+  return undefined
+})
+
+const videoFullScreenStyle = computed(() => {
+  if (isFullScreen.value) {
+    return {
+      height: '100%'
     }
   }
   return undefined
@@ -125,11 +144,17 @@ document.addEventListener('keyup', (e) => {
 
 <template>
   <div class="video-player">
-    <video ref="videoElement" v-if="videoUrl !== ''" class="video" @dblclick="playPauseVideo">
+    <video
+      ref="videoElement"
+      v-if="videoUrl !== ''"
+      class="video"
+      @dblclick="playPauseVideo"
+      :style="videoFullScreenStyle"
+    >
       <source :src="videoUrl" />
     </video>
     <div v-else class="open-file-container"></div>
-    <div class="control-bar" :style="controlBarFullScreenStyle">
+    <div class="control-bar" :style="controlBarFullScreenStyle" v-show="controlBarShow">
       <div class="process-bar">
         <div class="process-container">
           <div
