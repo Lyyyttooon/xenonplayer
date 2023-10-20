@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useFullscreenStore } from '@/stores/fullscreen'
 import { computed, nextTick, ref, watch } from 'vue'
+
+const fullScreenStore = useFullscreenStore()
 
 interface HotkeyEvent {
   [key: string]: () => void
@@ -10,7 +13,6 @@ const videoElement = ref<HTMLVideoElement | null>(null)
 const videoStatus = ref('pause')
 const videoProcess = ref(0)
 const volumeProcess = ref(1)
-const isFullScreen = ref(false)
 const controlBarShow = ref(true)
 
 // methods
@@ -61,8 +63,8 @@ const fullScreen = () => {
   if (!videoElement.value) {
     return
   }
-  isFullScreen.value = !isFullScreen.value
-  window.electronAPI.setFullScreen(isFullScreen.value)
+  fullScreenStore.toggleFullscreen()
+  window.electronAPI.setFullScreen(fullScreenStore.isFullscreen)
 }
 
 const hotkeyEvent: HotkeyEvent = {
@@ -72,13 +74,16 @@ const hotkeyEvent: HotkeyEvent = {
 }
 
 // watch
-watch(isFullScreen, (value) => {
-  if (value) {
-    controlBarShow.value = false
-  } else {
-    controlBarShow.value = true
+watch(
+  () => fullScreenStore.isFullscreen,
+  (value) => {
+    if (value) {
+      controlBarShow.value = false
+    } else {
+      controlBarShow.value = true
+    }
   }
-})
+)
 
 // computed
 const videoProcessButtonStyle = computed(() => {
@@ -94,7 +99,7 @@ const volumeButtonStyle = computed(() => {
 })
 
 const controlBarFullScreenStyle = computed(() => {
-  if (isFullScreen.value) {
+  if (fullScreenStore.isFullscreen) {
     return {
       position: 'absolute' as 'absolute',
       width: '100%',
@@ -105,7 +110,7 @@ const controlBarFullScreenStyle = computed(() => {
 })
 
 const videoFullScreenStyle = computed(() => {
-  if (isFullScreen.value) {
+  if (fullScreenStore.isFullscreen) {
     return {
       height: '100%'
     }

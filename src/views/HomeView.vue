@@ -1,9 +1,22 @@
 <script setup lang="ts">
 import VideoPlayer from '@/components/VideoPlayer.vue'
+import { useFullscreenStore } from '@/stores/fullscreen'
+import { computed, watch } from 'vue'
+
+const fullScreenStore = useFullscreenStore()
+
+const handleFullScreen = computed(() => {
+  if (fullScreenStore.isFullscreen) {
+    return {
+      height: '100%'
+    }
+  }
+  return undefined
+})
 </script>
 
 <template>
-  <main class="main-video-player">
+  <main class="main-video-player" :style="handleFullScreen">
     <VideoPlayer />
   </main>
 </template>
