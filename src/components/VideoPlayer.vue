@@ -201,6 +201,8 @@ document.addEventListener('keyup', (e) => {
         </div>
       </div>
     </div>
+    <div class="fullscreen-bar mousemove-top"></div>
+    <div class="fullscreen-bar mousemove-bottom"></div>
   </div>
 </template>
 
@@ -324,5 +326,21 @@ document.addEventListener('keyup', (e) => {
   > .btn:active {
     background-color: #2c2c2c;
   }
+}
+
+.fullscreen-bar {
+  position: absolute;
+  width: 100%;
+}
+
+.mousemove-top {
+  height: 35px;
+  top: 0;
+  cursor: n-resize;
+}
+.mousemove-bottom {
+  height: 40px;
+  bottom: 0;
+  cursor: s-resize;
 }
 </style>
