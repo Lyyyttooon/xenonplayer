@@ -73,6 +73,13 @@ const hotkeyEvent: HotkeyEvent = {
   Enter: fullScreen
 }
 
+const toggleControlBar = () => {
+  if (!fullScreenStore.isFullscreen) {
+    return
+  }
+  controlBarShow.value = !controlBarShow.value
+}
+
 // watch
 watch(
   () => fullScreenStore.isFullscreen,
@@ -159,7 +166,12 @@ document.addEventListener('keyup', (e) => {
       <source :src="videoUrl" />
     </video>
     <div v-else class="open-file-container"></div>
-    <div class="control-bar" :style="controlBarFullScreenStyle" v-show="controlBarShow">
+    <div
+      class="control-bar"
+      :style="controlBarFullScreenStyle"
+      v-show="controlBarShow"
+      @mouseleave="toggleControlBar"
+    >
       <div class="process-bar">
         <div class="process-container">
           <div
@@ -202,7 +214,7 @@ document.addEventListener('keyup', (e) => {
       </div>
     </div>
     <div class="fullscreen-bar mousemove-top"></div>
-    <div class="fullscreen-bar mousemove-bottom"></div>
+    <div class="fullscreen-bar mousemove-bottom" @mousemove="toggleControlBar"></div>
   </div>
 </template>
 
@@ -230,7 +242,8 @@ document.addEventListener('keyup', (e) => {
 .control-bar {
   background-color: #323233;
   height: 64px;
-  flex: none;
+  position: relative;
+  z-index: 99;
 }
 
 .scrubber-button {
@@ -336,11 +349,11 @@ document.addEventListener('keyup', (e) => {
 .mousemove-top {
   height: 35px;
   top: 0;
-  cursor: n-resize;
+  z-index: 9;
 }
 .mousemove-bottom {
   height: 40px;
   bottom: 0;
-  cursor: s-resize;
+  z-index: 9;
 }
 </style>

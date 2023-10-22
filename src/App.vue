@@ -21,5 +21,7 @@ document.addEventListener('keyup', (e) => {
   height: 35px;
   background-color: #323233;
   -webkit-app-region: drag;
+  position: relative;
+  z-index: 99;
 }
 </style>
