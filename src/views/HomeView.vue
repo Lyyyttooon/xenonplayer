@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import VideoPlayer from '@/components/VideoPlayer.vue'
 import { useFullscreenStore } from '@/stores/fullscreen'
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 
 const fullScreenStore = useFullscreenStore()
 

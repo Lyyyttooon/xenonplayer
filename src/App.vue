@@ -12,7 +12,7 @@ document.addEventListener('keyup', (e) => {
 </script>
 
 <template>
-  <div class="title-bar" v-if="!fullScreenStore.isFullscreen"></div>
+  <div class="title-bar" v-if="fullScreenStore.showTitleBar"></div>
   <RouterView />
 </template>
 

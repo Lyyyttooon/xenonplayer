@@ -64,6 +64,7 @@ const fullScreen = () => {
     return
   }
   fullScreenStore.toggleFullscreen()
+  fullScreenStore.toggleTitleBar()
   window.electronAPI.setFullScreen(fullScreenStore.isFullscreen)
 }
 
