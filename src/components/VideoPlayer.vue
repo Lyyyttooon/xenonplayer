@@ -153,6 +153,24 @@ document.addEventListener('keyup', (e) => {
     hotkeyEvent[e.code]()
   }
 })
+
+document.addEventListener('wheel', (e) => {
+  console.log()
+  if (e.deltaY > 0) {
+    volumeProcess.value -= 0.1
+  } else {
+    volumeProcess.value += 0.1
+  }
+  if (volumeProcess.value > 1) {
+    volumeProcess.value = 1
+  }
+  if (volumeProcess.value < 0) {
+    volumeProcess.value = 0
+  }
+  if (videoElement.value) {
+    videoElement.value.volume = volumeProcess.value
+  }
+})
 </script>
 
 <template>
@@ -204,13 +222,6 @@ document.addEventListener('keyup', (e) => {
         </div> -->
         <div class="btn open-btn" @click="openFile">
           <img src="@/assets/icons-open.png" />
-          <input
-            id="open-file"
-            style="display: none"
-            type="file"
-            accept="video/*, .mkv"
-            @change="handleFileChange"
-          />
         </div>
       </div>
     </div>
