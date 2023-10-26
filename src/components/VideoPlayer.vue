@@ -100,9 +100,21 @@ const videoProcessButtonStyle = computed(() => {
   }
 })
 
+const videoProcessLineStyle = computed(() => {
+  return {
+    width: `${(videoProcess.value * 100).toFixed(2)}%`
+  }
+})
+
 const volumeButtonStyle = computed(() => {
   return {
     left: `${(volumeProcess.value * 90).toFixed(2)}%`
+  }
+})
+
+const volumeProcessLineStyle = computed(() => {
+  return {
+    width: `${(volumeProcess.value * 100).toFixed(2)}%`
   }
 })
 
@@ -193,6 +205,7 @@ document.addEventListener('wheel', (e) => {
     >
       <div class="process-bar">
         <div class="process-container">
+          <div class="process-line" :style="videoProcessLineStyle"></div>
           <div
             id="video-scrubber-button"
             class="scrubber-button"
@@ -202,6 +215,7 @@ document.addEventListener('wheel', (e) => {
         </div>
         <img src="@/assets/icons-voice.png" style="height: 14px; width: 14px" />
         <div class="volume-container">
+          <div class="process-line" :style="volumeProcessLineStyle"></div>
           <div id="volume-scrubber-button" class="scrubber-button" :style="volumeButtonStyle"></div>
           <div class="fill-line"></div>
         </div>
@@ -264,6 +278,17 @@ document.addEventListener('wheel', (e) => {
   border-radius: 5.5px;
   border: 1px solid #000;
   background-color: #ffffff;
+}
+
+.process-line {
+  height: 2px;
+  background-color: #31a2e8;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 46%;
+  bottom: 0;
+  transform: translateX(0px);
 }
 
 .process-bar {
