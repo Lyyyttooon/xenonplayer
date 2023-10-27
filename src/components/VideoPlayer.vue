@@ -169,9 +169,9 @@ document.addEventListener('keyup', (e) => {
 document.addEventListener('wheel', (e) => {
   console.log()
   if (e.deltaY > 0) {
-    volumeProcess.value -= 0.1
+    volumeProcess.value -= 0.05
   } else {
-    volumeProcess.value += 0.1
+    volumeProcess.value += 0.05
   }
   if (volumeProcess.value > 1) {
     volumeProcess.value = 1
