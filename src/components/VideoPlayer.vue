@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useFullscreenStore } from '@/stores/fullscreen'
+import { useVideoInfoStore } from '@/stores/videoInfo'
 import { computed, nextTick, ref, watch } from 'vue'
 
 const fullScreenStore = useFullscreenStore()
+const videoInfoStore = useVideoInfoStore()
 
 interface HotkeyEvent {
   [key: string]: () => void
