@@ -5,7 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setFouse: () => ipcRenderer.send('set-focus', null),
   setDialog: (options: object) => ipcRenderer.send('open-select-file-dialog', options),
 
-  onFileOpened: (callback: (url: string, blobData: Blob) => void) => {
-    ipcRenderer.on('file-opened', (_, url: string, blobData: Blob) => callback(url, blobData))
+  onFileOpened: (callback: (name: string, blobData: Blob) => void) => {
+    ipcRenderer.on('file-opened', (_, name: string, blobData: Blob) => callback(name, blobData))
   }
 })

@@ -1,5 +1,5 @@
 import { app, BrowserWindow, dialog, ipcMain, powerSaveBlocker } from 'electron'
-import { join } from 'node:path'
+import path, { join } from 'node:path'
 import fs from 'node:fs'
 
 let win: BrowserWindow | null = null
@@ -96,7 +96,7 @@ function openFile(url: string) {
       console.log('File read error', err.message)
       return
     }
-    win?.webContents.send('file-opened', url, data)
+    win?.webContents.send('file-opened', path.parse(url).name, data)
   })
 }
 

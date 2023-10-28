@@ -52,6 +52,7 @@ const stopVideo = () => {
   videoUrl.value = ''
   videoStatus.value = 'pause'
   videoProcess.value = 0
+  videoInfoStore.updateVideoInfo({ name: '' })
 }
 
 const videoTimeJump = () => {
@@ -142,10 +143,11 @@ const videoFullScreenStyle = computed(() => {
 
 // electron method
 // 使用electron ipc打开文件
-window.electronAPI.onFileOpened((url: string, blobData: Blob) => {
+window.electronAPI.onFileOpened((name: string, blobData: Blob) => {
   stopVideo()
   nextTick(() => {
-    videoUrl.value = URL.createObjectURL(new Blob([blobData]))
+    videoUrl.value = URL.createObjectURL(new File([blobData], name))
+    videoInfoStore.updateVideoInfo({ name: name })
     nextTick(() => {
       playPauseVideo()
       if (!videoElement.value) {
