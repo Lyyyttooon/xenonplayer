@@ -7,7 +7,7 @@ const fullScreenStore = useFullscreenStore()
 const videoInfoStore = useVideoInfoStore()
 
 interface HotkeyEvent {
-  [key: string]: () => void
+  [key: string]: (e: KeyboardEvent) => void
 }
 
 const videoUrl = ref('')
@@ -18,7 +18,9 @@ const volumeProcess = ref(1)
 const controlBarShow = ref(true)
 const hideMouse = ref(false)
 
+let videoTimeJumpTimeout = 0
 let mouseMoveTimeout = 0
+let arrowRightLongPress = false
 
 // methods
 const openFile = () => {
@@ -58,11 +60,33 @@ const stopVideo = () => {
   videoInfoStore.updateVideoInfo({ name: '' })
 }
 
-const videoTimeJump = () => {
+const videoTimeJump = (e: KeyboardEvent) => {
+  if (e.repeat) {
+    return
+  }
   if (!videoElement.value) {
     return
   }
-  videoElement.value.currentTime += 5
+  if (videoTimeJumpTimeout) {
+    window.clearTimeout(videoTimeJumpTimeout)
+    videoTimeJumpTimeout = 0
+  }
+  videoTimeJumpTimeout = window.setTimeout(() => {
+    arrowRightLongPress = true
+    if (!videoElement.value) {
+      return
+    }
+    videoElement.value.playbackRate = videoElement.value.playbackRate * 2
+  }, 800)
+}
+
+const videoTimeBack = () => {
+  if (!videoElement.value) {
+    return
+  }
+  videoElement.value.currentTime -= 5
+  videoElement.value?.play()
+  videoStatus.value = 'play'
 }
 
 const fullScreen = () => {
@@ -77,6 +101,7 @@ const fullScreen = () => {
 const hotkeyEvent: HotkeyEvent = {
   Space: playPauseVideo,
   ArrowRight: videoTimeJump,
+  ArrowLeft: videoTimeBack,
   Enter: fullScreen
 }
 
@@ -85,6 +110,16 @@ const toggleControlBar = () => {
     return
   }
   controlBarShow.value = !controlBarShow.value
+}
+
+const videoTimeUpdate = () => {
+  let currentTime = videoElement.value?.currentTime ? videoElement.value?.currentTime : 0
+  let duration = videoElement.value?.duration ? videoElement.value?.duration : 0
+  videoProcess.value = currentTime / duration
+}
+
+const videoEnded = () => {
+  videoStatus.value = 'pause'
 }
 
 // watch
@@ -158,20 +193,34 @@ window.electronAPI.onFileOpened((name: string, blobData: Blob) => {
       if (!videoElement.value) {
         return
       }
-      videoElement.value.addEventListener('timeupdate', () => {
-        let currentTime = videoElement.value?.currentTime ? videoElement.value?.currentTime : 0
-        let duration = videoElement.value?.duration ? videoElement.value?.duration : 0
-        videoProcess.value = currentTime / duration
-      })
+      videoElement.value.addEventListener('timeupdate', videoTimeUpdate)
+      videoElement.value.addEventListener('ended', videoEnded)
       videoElement.value.volume = volumeProcess.value
     })
   })
 })
 
 // event listener
-document.addEventListener('keyup', (e) => {
+
+document.addEventListener('keydown', (e) => {
   if (hotkeyEvent[e.code]) {
-    hotkeyEvent[e.code]()
+    hotkeyEvent[e.code](e)
+  }
+})
+
+document.addEventListener('keyup', (e) => {
+  if (!videoElement.value) {
+    return
+  }
+  if (e.code === 'ArrowRight') {
+    if (arrowRightLongPress) {
+      videoElement.value.playbackRate = videoElement.value.playbackRate / 2
+      window.clearTimeout(videoTimeJumpTimeout)
+      videoTimeJumpTimeout = 0
+      arrowRightLongPress = false
+    } else {
+      videoElement.value.currentTime += 5
+    }
   }
 })
 
