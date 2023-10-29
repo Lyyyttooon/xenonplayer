@@ -16,6 +16,9 @@ const videoStatus = ref('pause')
 const videoProcess = ref(0)
 const volumeProcess = ref(1)
 const controlBarShow = ref(true)
+const hideMouse = ref(false)
+
+let mouseMoveTimeout = 0
 
 // methods
 const openFile = () => {
@@ -133,12 +136,14 @@ const controlBarFullScreenStyle = computed(() => {
 })
 
 const videoFullScreenStyle = computed(() => {
+  let data: any = {}
   if (fullScreenStore.isFullscreen) {
-    return {
-      height: '100%'
-    }
+    data.height = '100%'
   }
-  return undefined
+  if (hideMouse.value) {
+    data.cursor = 'none'
+  }
+  return data
 })
 
 // electron method
@@ -186,6 +191,18 @@ document.addEventListener('wheel', (e) => {
   if (videoElement.value) {
     videoElement.value.volume = volumeProcess.value
   }
+})
+
+document.addEventListener('mousemove', () => {
+  hideMouse.value = false
+  if (mouseMoveTimeout) {
+    window.clearTimeout(mouseMoveTimeout)
+    mouseMoveTimeout = 0
+  }
+
+  mouseMoveTimeout = window.setTimeout(() => {
+    hideMouse.value = true
+  }, 2000)
 })
 </script>
 
